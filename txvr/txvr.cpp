@@ -5,6 +5,7 @@
 #include <string>
 #include "../../lsMisc/CommandLineParser.h"
 #include "../../lsMisc/stdosd/stdosd.h"
+#include "../../lsMisc/HighDPI.h"
 
 #include "txvr.h"
 
@@ -44,9 +45,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
+    InitHighDPISupport();
+
     CCommandLineParser parser;
     wstring file;
-    parser.AddOption(L"", 1, &file, ArgEncodingFlags::ArgEncodingFlags_Default,
+    parser.AddOption(L"", ArgCount::ArgCount_OneToInfinite, &file, ArgEncodingFlags::ArgEncodingFlags_Default,
         I18N(L"File to open"));
 
     parser.Parse();
