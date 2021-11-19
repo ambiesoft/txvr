@@ -139,12 +139,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\lsMisc\CHandle.h" />
     <ClInclude Include="..\..\lsMisc\CommandLineParser.h" />
+    <ClInclude Include="..\..\lsMisc\DebugMacro.h" />
+    <ClInclude Include="..\..\lsMisc\GetLastErrorString.h" />
+    <ClInclude Include="..\..\lsMisc\GetVersionString.h" />
     <ClInclude Include="..\..\lsMisc\HighDPI.h" />
     <ClInclude Include="..\..\lsMisc\stdosd\stdosd.h" />
     <ClInclude Include="..\..\lsMisc\stdosd\stdosd_literal.h" />
     <ClInclude Include="..\..\lsMisc\UrlEncode.h" />
     <ClInclude Include="..\..\lsMisc\UTF16toUTF8.h" />
+    <ClInclude Include="..\..\profile\cpp\Profile\include\ambiesoft.profile.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -152,6 +157,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lsMisc\CommandLineParser.cpp" />
+    <ClCompile Include="..\..\lsMisc\DebugMacro.cpp" />
+    <ClCompile Include="..\..\lsMisc\GetLastErrorString.cpp" />
+    <ClCompile Include="..\..\lsMisc\GetVersionString.cpp" />
     <ClCompile Include="..\..\lsMisc\HighDPI.cpp" />
     <ClCompile Include="..\..\lsMisc\stdosd\stdosd.cpp" />
     <ClCompile Include="..\..\lsMisc\stdosd\stdosd_win.cpp" />
@@ -165,6 +173,9 @@
   <ItemGroup>
     <Image Include="small.ico" />
     <Image Include="txvr.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="history.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
