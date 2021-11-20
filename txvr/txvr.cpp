@@ -10,6 +10,7 @@
 #include "../../lsMisc/GetLastErrorString.h"
 #include "../../lsMisc/DebugMacro.h"
 #include "../../lsMisc/GetVersionString.h"
+#include "../../lsMisc/ErrorExit.h"
 #include "../../profile/cpp/Profile/include/ambiesoft.profile.h"
 #include "txvr.h"
 
@@ -19,40 +20,13 @@ using namespace std;
 using namespace Ambiesoft;
 using namespace Ambiesoft::stdosd;
 
-#define MAX_LOADSTRING 100
-
-// 10mb
-#define MAX_FILE_SIZE  (10 * 1024 * 1024)
-#define SECTION_LOCATION "Location"
-#define KEY_PLACEMENT "Placement"
-
-// Global Variables:
-HINSTANCE ghInst;                                // current instance
-CFileHandle ghFile;
-HWND ghEdit;
-
-WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
-WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
-
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
-void ErrorExit(LPCTSTR pMessage)
-{
-	MessageBox(NULL, pMessage, APPNAME, MB_ICONERROR);
-	ExitProcess(1);
-}
-void ErrorExit(const wstring& message)
-{
-	ErrorExit(message.c_str());
-}
-void ErrorExit(DWORD le)
-{
-	ErrorExit(GetLastErrorString(le).c_str());
-}
+
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR    lpCmdLine,
@@ -209,118 +183,6 @@ void SaveSettings(HWND hWnd)
 			APPNAME,
 			MB_ICONWARNING);
 	}
-}
-wstring GetAllText(HANDLE hFile)
-{
-	LARGE_INTEGER fileSize;
-	fileSize.QuadPart = 0;
-	if (!GetFileSizeEx(hFile, &fileSize))
-	{
-		ErrorExit(GetLastError());
-	}
-	if (fileSize.QuadPart > MAX_FILE_SIZE)
-	{
-		ErrorExit(I18N(L"File size is too big."));
-	}
-	vector<BYTE> v;
-	v.resize(fileSize.LowPart + 4);
-	DWORD dwRead = 0;
-	if (!ReadFile(hFile,
-		&v[0],
-		fileSize.LowPart,
-		&dwRead,
-		NULL) || dwRead != fileSize.LowPart)
-	{
-		ErrorExit(GetLastError());
-	}
-	v[fileSize.LowPart] = 0;
-	v[fileSize.LowPart + 1] = 0;
-	v[fileSize.LowPart + 2] = 0;
-	v[fileSize.LowPart + 3] = 0;
-	return toStdWstringFromUtf8((const char*)&v[0]);
-}
-//
-//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  PURPOSE: Processes messages for the main window.
-//
-//  WM_COMMAND  - process the application menu
-//  WM_PAINT    - Paint the main window
-//  WM_DESTROY  - post a quit message and return
-//
-//
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	switch (message)
-	{
-	case WM_CREATE:
-	{
-		RECT r;
-		GetClientRect(hWnd, &r);
-		ghEdit = CreateWindow(
-			TEXT("EDIT"), TEXT(""),
-			WS_CHILD | WS_VISIBLE | WS_BORDER | WS_HSCROLL | WS_VSCROLL |
-			ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY | ES_WANTRETURN,
-			r.left, r.top, r.right - r.left, r.bottom - r.top,
-			hWnd, (HMENU)1,
-			ghInst, NULL);
-
-		LOGFONT lfText = {};
-		SystemParametersInfo(SPI_GETICONTITLELOGFONT,
-			sizeof(lfText),
-			&lfText,
-			FALSE);
-		HFONT hFontNew = CreateFontIndirect(&lfText);
-		SendMessage(ghEdit, WM_SETFONT, (WPARAM)hFontNew, FALSE);
-		wstring all = GetAllText(ghFile);
-		SetWindowText(ghEdit, all.c_str());
-	}
-	break;
-
-	case WM_SIZE:
-	{
-		RECT r;
-		GetClientRect(hWnd, &r);
-		MoveWindow(ghEdit, r.left, r.top, r.right - r.left, r.bottom - r.top, TRUE);
-	}
-	break;
-
-	case WM_COMMAND:
-	{
-		int wmId = LOWORD(wParam);
-		// Parse the menu selections:
-		switch (wmId)
-		{
-		case IDM_ABOUT:
-			DialogBox(ghInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-			break;
-		case IDM_EXIT:
-			DestroyWindow(hWnd);
-			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
-		}
-	}
-	break;
-
-	case WM_PAINT:
-	{
-		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hWnd, &ps);
-		// TODO: Add any drawing code that uses hdc here...
-		EndPaint(hWnd, &ps);
-	}
-	break;
-
-	case WM_DESTROY:
-		SaveSettings(hWnd);
-		PostQuitMessage(0);
-		break;
-
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-	return 0;
 }
 
 // Message handler for about box.

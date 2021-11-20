@@ -150,6 +150,8 @@
     <ClInclude Include="..\..\lsMisc\CHandle.h" />
     <ClInclude Include="..\..\lsMisc\CommandLineParser.h" />
     <ClInclude Include="..\..\lsMisc\DebugMacro.h" />
+    <ClInclude Include="..\..\lsMisc\ErrorExit.h" />
+    <ClInclude Include="..\..\lsMisc\GetAllTexts.h" />
     <ClInclude Include="..\..\lsMisc\GetLastErrorString.h" />
     <ClInclude Include="..\..\lsMisc\GetVersionString.h" />
     <ClInclude Include="..\..\lsMisc\HighDPI.h" />
@@ -166,6 +168,8 @@
   <ItemGroup>
     <ClCompile Include="..\..\lsMisc\CommandLineParser.cpp" />
     <ClCompile Include="..\..\lsMisc\DebugMacro.cpp" />
+    <ClCompile Include="..\..\lsMisc\ErrorExit.cpp" />
+    <ClCompile Include="..\..\lsMisc\GetAllTexts.cpp" />
     <ClCompile Include="..\..\lsMisc\GetLastErrorString.cpp" />
     <ClCompile Include="..\..\lsMisc\GetVersionString.cpp" />
     <ClCompile Include="..\..\lsMisc\HighDPI.cpp" />
@@ -174,6 +178,8 @@
     <ClCompile Include="..\..\lsMisc\UrlEncode.cpp" />
     <ClCompile Include="..\..\lsMisc\UTF16toUTF8.cpp" />
     <ClCompile Include="txvr.cpp" />
+    <ClCompile Include="globals.cpp" />
+    <ClCompile Include="WndProc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="txvr.rc" />
