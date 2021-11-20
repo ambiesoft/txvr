@@ -13,6 +13,8 @@
 #include "../../lsMisc/GetAllTexts.h"
 #include "../../lsMisc/ErrorExit.h"
 #include "../../profile/cpp/Profile/include/ambiesoft.profile.h"
+
+#include "helper.h"
 #include "txvr.h"
 
 #pragma comment(lib, "Shlwapi.lib")
@@ -65,8 +67,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			ErrorExit(I18N(L"File size is too large"));
 		}
-		wstring all = GetAllTexts(ghFile, fileSize.LowPart);
-		SetWindowText(ghEdit, all.c_str());
+		vector<BYTE> all = GetAllTexts(ghFile, fileSize.LowPart);
+		int cp = GetDetectedCodecGoogle(&all[0], all.size());
+		wstring allText = toStdWstring(cp, (const char*)&all[0], all.size());
+		SetWindowText(ghEdit, allText.c_str());
 	}
 	break;
 
