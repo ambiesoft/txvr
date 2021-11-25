@@ -68,8 +68,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ErrorExit(I18N(L"File size is too large"));
 		}
 		vector<BYTE> all = GetAllTexts(ghFile, fileSize.LowPart);
-		int cp = GetDetectedCodecGoogle(&all[0], all.size());
-		wstring allText = toStdWstring(cp, (const char*)&all[0], all.size());
+		//int cp = GetDetectedCodecGoogle(&all[0], all.size());
+		wstring allText = GetDetectedCodecICU(&all[0], (int)all.size());
+		// wstring allText = toStdWstring(cp, (const char*)&all[0], all.size());
 		SetWindowText(ghEdit, allText.c_str());
 	}
 	break;

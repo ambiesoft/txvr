@@ -1,2 +1,3 @@
 #pragma once
-int GetDetectedCodecGoogle(const BYTE* pByte, size_t size);
+int GetDetectedCodecGoogle(const BYTE* pByte, int size);
+std::wstring GetDetectedCodecICU(const BYTE* pByte, int size);

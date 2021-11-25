@@ -6,6 +6,11 @@
 #include "../compact_enc_det/compact_enc_det/compact_enc_det.h"
 #include "../compact_enc_det/compact_enc_det/compact_enc_det_hint_code.h"
 
+#include <unicode/utypes.h>
+#include <unicode/ucsdet.h>
+#include <unicode/ucnv.h>
+#include <unicode/ustring.h>
+#include <unicode/unistr.h>
 #include "helper.h"
 
 static struct {
@@ -177,7 +182,11 @@ static int GetCPFromGE(int ge)
     }
     return 0;
 }
-int GetDetectedCodecGoogle(const BYTE* pByte, size_t size)
+static int GetCPFromICU(const char* code)
+{
+    return 0;
+}
+int GetDetectedCodecGoogle(const BYTE* pByte, int size)
 {
     if (size==0)
     {
@@ -202,4 +211,52 @@ int GetDetectedCodecGoogle(const BYTE* pByte, size_t size)
     //}
 
     return GetCPFromGE(enc);
+}
+
+
+std::wstring GetDetectedCodecICU(const BYTE* pByte, int size)
+{
+    UErrorCode status = U_ZERO_ERROR;
+    std::unique_ptr<UCharsetDetector, void(*)(UCharsetDetector*)> csd(ucsdet_open(&status), ucsdet_close);
+
+    ucsdet_setText(csd.get(), (const char*)pByte, size, &status);
+    const UCharsetMatch* match = ucsdet_detect(csd.get(), &status);
+
+    if (match == nullptr)
+    {
+        return std::wstring();
+    }
+
+    const char* name = ucsdet_getName(match, &status);
+    //int32_t conf  = ucsdet_getConfidence(match, &status);
+
+    icu::UnicodeString ustr;
+    int32_t ustrSize = ustr.getCapacity();
+    do {
+        status = U_ZERO_ERROR;
+        UChar* buf = ustr.getBuffer(ustrSize);
+        ustrSize = ucsdet_getUChars(
+            match,
+            buf,
+            ustrSize,
+            &status);
+        ustr.releaseBuffer();
+        ustr.truncate(ustrSize);
+    } while (status == U_BUFFER_OVERFLOW_ERROR);
+
+    std::vector<wchar_t> vstr;
+
+    int32_t requiredSize;
+    UErrorCode error = U_ZERO_ERROR;
+
+    // obtain the size of string we need
+    u_strToWCS(nullptr, 0, &requiredSize, ustr.getBuffer(), ustr.length(), &error);
+
+    // resize accordingly (this will not include any terminating null character, but it also doesn't need to either)
+    vstr.resize(requiredSize+4);
+
+    // copy the UnicodeString buffer to the std::wstring.
+    error = U_ZERO_ERROR;
+    u_strToWCS(vstr.data(), (int32_t)vstr.size(), nullptr, ustr.getBuffer(), ustr.length(), &error);
+    return vstr.data();
 }

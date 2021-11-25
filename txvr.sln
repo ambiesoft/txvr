@@ -5,6 +5,11 @@ VisualStudioVersion = 17.1.31903.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "txvr", "txvr\txvr.vcxproj", "{019FC8D0-3F13-456C-8F75-9569FC7082CD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zzzDist", "zzzDist\zzzDist.vcxproj", "{8086BF44-794F-4419-8DE3-F6854883D8E8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{019FC8D0-3F13-456C-8F75-9569FC7082CD} = {019FC8D0-3F13-456C-8F75-9569FC7082CD}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +26,14 @@ Global
 		{019FC8D0-3F13-456C-8F75-9569FC7082CD}.Release|x64.Build.0 = Release|x64
 		{019FC8D0-3F13-456C-8F75-9569FC7082CD}.Release|x86.ActiveCfg = Release|Win32
 		{019FC8D0-3F13-456C-8F75-9569FC7082CD}.Release|x86.Build.0 = Release|Win32
+		{8086BF44-794F-4419-8DE3-F6854883D8E8}.Debug|x64.ActiveCfg = Debug|x64
+		{8086BF44-794F-4419-8DE3-F6854883D8E8}.Debug|x64.Build.0 = Debug|x64
+		{8086BF44-794F-4419-8DE3-F6854883D8E8}.Debug|x86.ActiveCfg = Debug|Win32
+		{8086BF44-794F-4419-8DE3-F6854883D8E8}.Debug|x86.Build.0 = Debug|Win32
+		{8086BF44-794F-4419-8DE3-F6854883D8E8}.Release|x64.ActiveCfg = Release|x64
+		{8086BF44-794F-4419-8DE3-F6854883D8E8}.Release|x64.Build.0 = Release|x64
+		{8086BF44-794F-4419-8DE3-F6854883D8E8}.Release|x86.ActiveCfg = Release|Win32
+		{8086BF44-794F-4419-8DE3-F6854883D8E8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
