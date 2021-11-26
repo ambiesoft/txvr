@@ -11,15 +11,23 @@
 // 10mb
 #define MAX_FILE_SIZE  (10 * 1024 * 1024)
 #define SECTION_LOCATION "Location"
+#define SECTION_OPTION "Option"
 #define KEY_PLACEMENT "Placement"
+#define KEY_WORDWRAP "Wordwrap"
 
 
 // Global Variables:
 extern HINSTANCE ghInst;                                // current instance
 extern Ambiesoft::CFileHandle ghFile;
 extern HWND ghEdit;
+extern HWND ghEditWR;
 extern WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 extern WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 void SaveSettings(HWND hWnd);
+
+struct CreateWinStruct
+{
+	bool bWordWrap_;
+};

@@ -139,18 +139,24 @@ wstring GetIniFilePath()
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-
 	ghInst = hInstance; // Store instance handle in our global variable
 
+	Profile::CHashIni ini(Profile::ReadAll(GetIniFilePath()));
+
+	CreateWinStruct cws = { 0 };
+	bool vbal;
+	Profile::GetBool(SECTION_OPTION, KEY_WORDWRAP, false, vbal, ini);
+	cws.bWordWrap_ = vbal;
+
 	HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, &cws);
 
 	if (!hWnd)
 	{
 		return FALSE;
 	}
 
-	Profile::CHashIni ini(Profile::ReadAll(GetIniFilePath()));
+	
 	vector<BYTE> vwpm;
 	if (Profile::GetBinary(SECTION_LOCATION, KEY_PLACEMENT, vwpm, ini))
 	{
@@ -168,6 +174,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 void SaveSettings(HWND hWnd)
 {
 	Profile::CHashIni ini(Profile::ReadAll(GetIniFilePath()));
+
+	MENUITEMINFO mii;
+	ZeroMemory(&mii, sizeof(mii));
+	mii.cbSize = sizeof(mii);
+	mii.fMask = MIIM_STATE;
+	DVERIFY(GetMenuItemInfo(GetMenu(hWnd), ID_TOOLS_WORDRAP, FALSE, &mii));
+	Profile::WriteBool(SECTION_OPTION, KEY_WORDWRAP,
+		(mii.fState & MFS_CHECKED) ? true : false,
+		ini);
 
 	WINDOWPLACEMENT wpm = { 0 };
 	wpm.length = sizeof(wpm);

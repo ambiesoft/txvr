@@ -39,12 +39,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 	{
+		// check menus
+		CreateWinStruct* cws = (CreateWinStruct*)((CREATESTRUCT*)lParam)->lpCreateParams;
+
+
 		RECT r;
 		GetClientRect(hWnd, &r);
+		LONG style = WS_CHILD | WS_VISIBLE | WS_BORDER | WS_HSCROLL | WS_VSCROLL |
+			ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY | ES_WANTRETURN;
+
 		ghEdit = CreateWindow(
 			TEXT("EDIT"), TEXT(""),
-			WS_CHILD | WS_VISIBLE | WS_BORDER | WS_HSCROLL | WS_VSCROLL |
-			ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY | ES_WANTRETURN,
+			style,
+			r.left, r.top, r.right - r.left, r.bottom - r.top,
+			hWnd, (HMENU)1,
+			ghInst, NULL);
+		
+		style ^= ES_AUTOHSCROLL | WS_HSCROLL;
+		ghEditWR = CreateWindow(
+			TEXT("EDIT"), TEXT(""),
+			style,
 			r.left, r.top, r.right - r.left, r.bottom - r.top,
 			hWnd, (HMENU)1,
 			ghInst, NULL);
@@ -56,6 +70,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			FALSE);
 		HFONT hFontNew = CreateFontIndirect(&lfText);
 		SendMessage(ghEdit, WM_SETFONT, (WPARAM)hFontNew, FALSE);
+		SendMessage(ghEditWR, WM_SETFONT, (WPARAM)hFontNew, FALSE);
 
 		LARGE_INTEGER fileSize;
 		fileSize.QuadPart = 0;
@@ -72,6 +87,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		wstring allText = GetDetectedCodecICU(&all[0], (int)all.size());
 		// wstring allText = toStdWstring(cp, (const char*)&all[0], all.size());
 		SetWindowText(ghEdit, allText.c_str());
+		SetWindowText(ghEditWR, allText.c_str());
+
+		MENUITEMINFO mii;
+		ZeroMemory(&mii, sizeof(mii));
+		mii.cbSize = sizeof(mii);
+		mii.fMask = MIIM_STATE;
+		mii.fState = cws->bWordWrap_ ? MFS_CHECKED : MFS_UNCHECKED;
+		DVERIFY(SetMenuItemInfo(GetMenu(hWnd), ID_TOOLS_WORDRAP, FALSE, &mii));
+		if (cws->bWordWrap_)
+			ShowWindow(ghEdit, SW_HIDE);
+		else
+			ShowWindow(ghEditWR, SW_HIDE);
 	}
 	break;
 
@@ -80,6 +107,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		RECT r;
 		GetClientRect(hWnd, &r);
 		MoveWindow(ghEdit, r.left, r.top, r.right - r.left, r.bottom - r.top, TRUE);
+		MoveWindow(ghEditWR, r.left, r.top, r.right - r.left, r.bottom - r.top, TRUE);
 	}
 	break;
 
@@ -97,9 +125,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case ID_TOOLS_WORDRAP:
 		{
-			LONG val = GetWindowLong(ghEdit, GWL_STYLE);
-			val ^= ES_AUTOHSCROLL|WS_HSCROLL;
-			SetWindowLong(ghEdit, GWL_STYLE, val);
+			MENUITEMINFO mii;
+			ZeroMemory(&mii, sizeof(mii));
+			mii.cbSize = sizeof(mii);
+			mii.fMask = MIIM_STATE;
+			DVERIFY(GetMenuItemInfo(GetMenu(hWnd), ID_TOOLS_WORDRAP, FALSE, &mii));
+			bool bOld = mii.fState & MFS_CHECKED;
+			if(bOld)
+			{
+				ShowWindow(ghEdit, SW_SHOW);
+				ShowWindow(ghEditWR, SW_HIDE);
+			}
+			else
+			{
+				ShowWindow(ghEdit, SW_HIDE);
+				ShowWindow(ghEditWR, SW_SHOW);
+			}
+			mii.fState ^= MFS_CHECKED;
+			DVERIFY(SetMenuItemInfo(GetMenu(hWnd), ID_TOOLS_WORDRAP, FALSE, &mii));
 		}
 		break;
 

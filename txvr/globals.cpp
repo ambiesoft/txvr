@@ -14,7 +14,7 @@ using namespace Ambiesoft;
 HINSTANCE ghInst;                                // current instance
 CFileHandle ghFile;
 HWND ghEdit;
-
+HWND ghEditWR;
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
