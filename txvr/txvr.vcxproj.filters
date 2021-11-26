@@ -78,6 +78,9 @@
     <ClInclude Include="helper.h">
       <Filter>01 Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lsMisc\menu.h">
+      <Filter>01 Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="txvr.cpp">
@@ -136,6 +139,9 @@
     </ClCompile>
     <ClCompile Include="..\compact_enc_det\util\languages\languages.cc">
       <Filter>02 Source Files\compact_enc_det</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lsMisc\menu.cpp">
+      <Filter>02 Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -12,6 +12,7 @@
 #include "../../lsMisc/GetVersionString.h"
 #include "../../lsMisc/GetAllTexts.h"
 #include "../../lsMisc/ErrorExit.h"
+#include "../../lsMisc/menu.h"
 #include "../../profile/cpp/Profile/include/ambiesoft.profile.h"
 
 #include "helper.h"
@@ -22,6 +23,7 @@
 using namespace std;
 using namespace Ambiesoft;
 using namespace Ambiesoft::stdosd;
+
 
 //
 //  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
@@ -89,12 +91,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SetWindowText(ghEdit, allText.c_str());
 		SetWindowText(ghEditWR, allText.c_str());
 
-		MENUITEMINFO mii;
-		ZeroMemory(&mii, sizeof(mii));
-		mii.cbSize = sizeof(mii);
-		mii.fMask = MIIM_STATE;
-		mii.fState = cws->bWordWrap_ ? MFS_CHECKED : MFS_UNCHECKED;
-		DVERIFY(SetMenuItemInfo(GetMenu(hWnd), ID_TOOLS_WORDRAP, FALSE, &mii));
+		DVERIFY(CheckMenu(GetMenu(hWnd), ID_TOOLS_WORDRAP, cws->bWordWrap_));
 		if (cws->bWordWrap_)
 			ShowWindow(ghEdit, SW_HIDE);
 		else
@@ -125,12 +122,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case ID_TOOLS_WORDRAP:
 		{
-			MENUITEMINFO mii;
-			ZeroMemory(&mii, sizeof(mii));
-			mii.cbSize = sizeof(mii);
-			mii.fMask = MIIM_STATE;
-			DVERIFY(GetMenuItemInfo(GetMenu(hWnd), ID_TOOLS_WORDRAP, FALSE, &mii));
-			bool bOld = mii.fState & MFS_CHECKED;
+			bool bOld = IsMenuChecked(GetMenu(hWnd), ID_TOOLS_WORDRAP);
 			if(bOld)
 			{
 				ShowWindow(ghEdit, SW_SHOW);
@@ -138,11 +130,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			else
 			{
-				ShowWindow(ghEdit, SW_HIDE);
 				ShowWindow(ghEditWR, SW_SHOW);
+				ShowWindow(ghEdit, SW_HIDE);
 			}
-			mii.fState ^= MFS_CHECKED;
-			DVERIFY(SetMenuItemInfo(GetMenu(hWnd), ID_TOOLS_WORDRAP, FALSE, &mii));
+			DVERIFY(CheckMenu(GetMenu(hWnd), ID_TOOLS_WORDRAP, !bOld));
 		}
 		break;
 

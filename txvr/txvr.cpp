@@ -11,6 +11,7 @@
 #include "../../lsMisc/DebugMacro.h"
 #include "../../lsMisc/GetVersionString.h"
 #include "../../lsMisc/ErrorExit.h"
+#include "../../lsMisc/menu.h"
 #include "../../profile/cpp/Profile/include/ambiesoft.profile.h"
 #include "txvr.h"
 
@@ -175,13 +176,8 @@ void SaveSettings(HWND hWnd)
 {
 	Profile::CHashIni ini(Profile::ReadAll(GetIniFilePath()));
 
-	MENUITEMINFO mii;
-	ZeroMemory(&mii, sizeof(mii));
-	mii.cbSize = sizeof(mii);
-	mii.fMask = MIIM_STATE;
-	DVERIFY(GetMenuItemInfo(GetMenu(hWnd), ID_TOOLS_WORDRAP, FALSE, &mii));
 	Profile::WriteBool(SECTION_OPTION, KEY_WORDWRAP,
-		(mii.fState & MFS_CHECKED) ? true : false,
+		IsMenuChecked(GetMenu(hWnd), ID_TOOLS_WORDRAP) ? true : false,
 		ini);
 
 	WINDOWPLACEMENT wpm = { 0 };

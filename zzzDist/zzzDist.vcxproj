@@ -105,7 +105,8 @@
       <Command>copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icuin69.dll" "$(TargetDir)"
 copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icuuc69.dll" "$(TargetDir)"
 copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icudt69.dll" "$(TargetDir)"
-</Command>
+
+del "$(TargetDir)zzzDist.*"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,7 +128,8 @@ copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icudt69.dll" "$(Target
       <Command>copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icuin69.dll" "$(TargetDir)"
 copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icuuc69.dll" "$(TargetDir)"
 copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icudt69.dll" "$(TargetDir)"
-</Command>
+
+del "$(TargetDir)zzzDist.*"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -145,7 +147,8 @@ copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icudt69.dll" "$(Target
       <Command>copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icuin69.dll" "$(TargetDir)"
 copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icuuc69.dll" "$(TargetDir)"
 copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icudt69.dll" "$(TargetDir)"
-</Command>
+
+del "$(TargetDir)zzzDist.*"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -167,7 +170,8 @@ copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icudt69.dll" "$(Target
       <Command>copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icuin69.dll" "$(TargetDir)"
 copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icuuc69.dll" "$(TargetDir)"
 copy "G:\vcpkg\packages\icu_$(PlatformTarget)-windows\bin\icudt69.dll" "$(TargetDir)"
-</Command>
+
+del "$(TargetDir)zzzDist.*"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
