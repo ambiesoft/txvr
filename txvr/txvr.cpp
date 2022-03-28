@@ -42,27 +42,34 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	wstring file;
 	parser.AddOption(L"", ArgCount::ArgCount_OneToInfinite, &file, ArgEncodingFlags::ArgEncodingFlags_Default,
 		I18N(L"File to open"));
+	bool bBlank = false;
+	parser.AddOption(L"--blank", ArgCount::ArgCount_Zero, &bBlank, ArgEncodingFlags_Default,
+		I18N(L"Opens in blank"));
 
 	parser.Parse();
 
-	if (file.empty()) {
-		ErrorExit(I18N(L"No file specified."));
-	}
-	if (!PathFileExists(file.c_str())) {
-		ErrorExit(stdFormat(I18N(L"'%s' does not exists."), file.c_str()));
-	}
-
-	ghFile = CreateFile(
-		file.c_str(),
-		GENERIC_READ,
-		FILE_SHARE_READ,
-		NULL,
-		OPEN_EXISTING,
-		FILE_ATTRIBUTE_NORMAL,
-		NULL);
-	if (!ghFile)
+	if (!bBlank)
 	{
-		ErrorExit(GetLastErrorString(GetLastError()).c_str());
+		if (file.empty()) {
+			ErrorExit(I18N(L"No file specified."));
+		}
+		if (!PathFileExists(file.c_str())) {
+			ErrorExit(stdFormat(I18N(L"'%s' does not exists."), file.c_str()));
+		}
+
+
+		ghFile = CreateFile(
+			file.c_str(),
+			GENERIC_READ,
+			FILE_SHARE_READ,
+			NULL,
+			OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL);
+		if (!ghFile)
+		{
+			ErrorExit(GetLastErrorString(GetLastError()).c_str());
+		}
 	}
 
 	// Initialize global strings

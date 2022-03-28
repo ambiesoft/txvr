@@ -74,22 +74,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SendMessage(ghEdit, WM_SETFONT, (WPARAM)hFontNew, FALSE);
 		SendMessage(ghEditWR, WM_SETFONT, (WPARAM)hFontNew, FALSE);
 
-		LARGE_INTEGER fileSize;
-		fileSize.QuadPart = 0;
-		if (!GetFileSizeEx(ghFile, &fileSize))
+		if (ghFile)
 		{
-			ErrorExit(GetLastError());
+			LARGE_INTEGER fileSize;
+			fileSize.QuadPart = 0;
+			if (!GetFileSizeEx(ghFile, &fileSize))
+			{
+				ErrorExit(GetLastError());
+			}
+			if (fileSize.QuadPart > MAX_FILE_SIZE)
+			{
+				ErrorExit(I18N(L"File size is too large"));
+			}
+			vector<BYTE> all = GetAllTexts(ghFile, fileSize.LowPart);
+			//int cp = GetDetectedCodecGoogle(&all[0], all.size());
+			wstring allText = GetDetectedCodecICU(&all[0], (int)all.size());
+			// wstring allText = toStdWstring(cp, (const char*)&all[0], all.size());
+			SetWindowText(ghEdit, allText.c_str());
+			SetWindowText(ghEditWR, allText.c_str());
 		}
-		if (fileSize.QuadPart > MAX_FILE_SIZE)
-		{
-			ErrorExit(I18N(L"File size is too large"));
-		}
-		vector<BYTE> all = GetAllTexts(ghFile, fileSize.LowPart);
-		//int cp = GetDetectedCodecGoogle(&all[0], all.size());
-		wstring allText = GetDetectedCodecICU(&all[0], (int)all.size());
-		// wstring allText = toStdWstring(cp, (const char*)&all[0], all.size());
-		SetWindowText(ghEdit, allText.c_str());
-		SetWindowText(ghEditWR, allText.c_str());
 
 		DVERIFY(CheckMenu(GetMenu(hWnd), ID_TOOLS_WORDRAP, cws->bWordWrap_));
 		if (cws->bWordWrap_)
