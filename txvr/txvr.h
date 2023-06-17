@@ -14,6 +14,7 @@
 #define SECTION_OPTION "Option"
 #define KEY_PLACEMENT "Placement"
 #define KEY_WORDWRAP "Wordwrap"
+#define KEY_LOGFONT "LogFont"
 
 
 // Global Variables:
@@ -25,9 +26,19 @@ extern WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 extern WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-void SaveSettings(HWND hWnd);
+void SaveSettings(HWND hWnd, HWND hEdit);
+bool getLogFontFromWindow(HWND hWnd, LOGFONT* pLogFont);
 
 struct CreateWinStruct
 {
 	bool bWordWrap_;
+	LOGFONT* pLogFont_;
+
+	CreateWinStruct() {
+		ZeroMemory(this, sizeof(*this));
+	}
+	~CreateWinStruct() {
+		delete pLogFont_;
+		pLogFont_ = nullptr;
+	}
 };

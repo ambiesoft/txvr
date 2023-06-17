@@ -9,6 +9,7 @@
 // Windows Header Files
 #include <windows.h>
 #include <Shlwapi.h>
+#include <commdlg.h>
 
 // C RunTime Header Files
 #include <stdlib.h>

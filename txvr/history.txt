@@ -1,3 +1,6 @@
+2023/06/17 v1.0.3
+Implemented font change
+
 2022/03/29 v1.0.2
 wordwrap
 added option '--blank' to allow open without filename

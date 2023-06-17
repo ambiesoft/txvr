@@ -19,6 +19,7 @@
 #include "txvr.h"
 
 #pragma comment(lib, "Shlwapi.lib")
+#pragma comment(lib, "Comdlg32.lib")
 
 using namespace std;
 using namespace Ambiesoft;
@@ -44,7 +45,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// check menus
 		CreateWinStruct* cws = (CreateWinStruct*)((CREATESTRUCT*)lParam)->lpCreateParams;
 
-
 		RECT r;
 		GetClientRect(hWnd, &r);
 		LONG style = WS_CHILD | WS_VISIBLE | WS_BORDER | WS_HSCROLL | WS_VSCROLL |
@@ -65,14 +65,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hWnd, (HMENU)1,
 			ghInst, NULL);
 
-		LOGFONT lfText = {};
-		SystemParametersInfo(SPI_GETICONTITLELOGFONT,
-			sizeof(lfText),
-			&lfText,
-			FALSE);
-		HFONT hFontNew = CreateFontIndirect(&lfText);
-		SendMessage(ghEdit, WM_SETFONT, (WPARAM)hFontNew, FALSE);
-		SendMessage(ghEditWR, WM_SETFONT, (WPARAM)hFontNew, FALSE);
+		if(cws->pLogFont_)
+		{ 
+			HFONT hf = CreateFontIndirect(cws->pLogFont_);
+			SendMessage(ghEdit, WM_SETFONT, (WPARAM)hf, FALSE);
+			SendMessage(ghEditWR, WM_SETFONT, (WPARAM)hf, FALSE);
+		}
+		else
+		{
+			LOGFONT lfText = {};
+			SystemParametersInfo(SPI_GETICONTITLELOGFONT,
+				sizeof(lfText),
+				&lfText,
+				FALSE);
+			HFONT hFontNew = CreateFontIndirect(&lfText);
+			SendMessage(ghEdit, WM_SETFONT, (WPARAM)hFontNew, FALSE);
+			SendMessage(ghEditWR, WM_SETFONT, (WPARAM)hFontNew, FALSE);
+		}
 
 		if (ghFile)
 		{
@@ -144,6 +153,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{}
 		break;
 
+		case ID_TOOLS_FONT:
+		{
+			LOGFONT logFont = { 0 };
+			getLogFontFromWindow(ghEdit, &logFont);
+
+			CHOOSEFONT cf;
+			cf.lStructSize = sizeof(cf);
+			cf.hwndOwner = hWnd;
+			cf.hDC = nullptr; // ignored
+			cf.lpLogFont = &logFont;
+			cf.Flags = CF_INITTOLOGFONTSTRUCT;
+			if (!ChooseFont(&cf))
+				break;
+
+			HFONT hf = CreateFontIndirect(&logFont);
+			SendMessage(ghEdit, WM_SETFONT, (WPARAM)hf, TRUE);
+			SendMessage(ghEditWR, WM_SETFONT, (WPARAM)hf, TRUE);
+		}
+		break;
+
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
@@ -160,7 +189,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	break;
 
 	case WM_DESTROY:
-		SaveSettings(hWnd);
+		SaveSettings(hWnd, ghEdit);
 		PostQuitMessage(0);
 		break;
 

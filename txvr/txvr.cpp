@@ -26,7 +26,11 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 
-
+bool getLogFontFromWindow(HWND hWnd, LOGFONT* pLogFont)
+{
+	HFONT hFontEdit = (HFONT)SendMessage(hWnd, WM_GETFONT, 0, 0);
+	return sizeof(LOGFONT) == GetObject(hFontEdit, sizeof(LOGFONT), pLogFont);
+}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -151,10 +155,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	Profile::CHashIni ini(Profile::ReadAll(GetIniFilePath()));
 
-	CreateWinStruct cws = { 0 };
+	CreateWinStruct cws;
 	bool vbal;
 	Profile::GetBool(SECTION_OPTION, KEY_WORDWRAP, false, vbal, ini);
 	cws.bWordWrap_ = vbal;
+
+	vector<BYTE> vLogFont;
+	if (Profile::GetBinary(SECTION_OPTION, KEY_LOGFONT, vLogFont, ini) &&
+		vLogFont.size() == sizeof(LOGFONT))
+	{
+		cws.pLogFont_ = new LOGFONT;
+		memcpy(cws.pLogFont_, vLogFont.data(), sizeof(LOGFONT));
+	}
 
 	HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, &cws);
@@ -164,7 +176,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		return FALSE;
 	}
 
-	
 	vector<BYTE> vwpm;
 	if (Profile::GetBinary(SECTION_LOCATION, KEY_PLACEMENT, vwpm, ini))
 	{
@@ -179,13 +190,24 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	return TRUE;
 }
-void SaveSettings(HWND hWnd)
+
+void SaveSettings(HWND hWnd, HWND hEdit)
 {
+	DASSERT(IsWindow(hWnd));
+	DASSERT(IsWindow(hEdit));
+
 	Profile::CHashIni ini(Profile::ReadAll(GetIniFilePath()));
 
 	Profile::WriteBool(SECTION_OPTION, KEY_WORDWRAP,
 		IsMenuChecked(GetMenu(hWnd), ID_TOOLS_WORDRAP) ? true : false,
 		ini);
+
+	LOGFONT lfEdit = { 0 };
+	if (getLogFontFromWindow(hEdit, &lfEdit))
+	{
+		Profile::WriteBinary(SECTION_OPTION, KEY_LOGFONT,
+			(const unsigned char*)&lfEdit, sizeof(LOGFONT), ini);
+	}
 
 	WINDOWPLACEMENT wpm = { 0 };
 	wpm.length = sizeof(wpm);
