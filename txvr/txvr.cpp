@@ -136,7 +136,7 @@ wstring GetIniFilePath()
 {
 	return stdCombinePath(
 		stdGetParentDirectory(stdGetModuleFileName()),
-		stdGetFileNameWitoutExtension(stdGetModuleFileName()) + L".ini");
+		stdGetFileNameWithoutExtension(stdGetModuleFileName()) + L".ini");
 }
 
 //
